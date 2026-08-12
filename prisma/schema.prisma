@@ -1,9 +1,47 @@
-
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User{
+  id          String  @id @default(uuid())
+  username String @unique
+  password String
+  website  Website[]
+}
+
+
+model Website{
+  id          String  @id @default(uuid())
+  url         String
+  timeAdded   DateTime
+  ticks       WebsiteTicks[]
+  userid      String
+  user        User   @relation(fields: [userid],references: [id])
+}
+
+model Region{
+  id          String  @id @default(uuid())
+  name        String
+  ticks       WebsiteTicks[]
+}
+
+model WebsiteTicks{
+  id           String  @id @default(uuid())
+  res_time_ms  Int
+  status       WebsiteStatus
+  region_id    String
+  website_id   String
+  region       Region    @relation(fields: [region_id],references: [id])
+  website      Website   @relation(fields: [website_id],references: [id])
+
+}
+
+enum WebsiteStatus{
+  up
+  down
 }
