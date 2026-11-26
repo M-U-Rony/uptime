@@ -14,6 +14,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/uptime"
+ENV JWT_SECRET="docker-build-placeholder-secret"
 RUN bunx prisma generate
 RUN bun run build
 
@@ -29,6 +30,7 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/dbConnection.ts ./
+COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/producer.ts ./
 COPY --from=builder /app/worker.ts ./
 COPY --from=builder /app/redis ./redis

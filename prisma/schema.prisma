@@ -7,41 +7,47 @@ datasource db {
   provider = "postgresql"
 }
 
-model User{
-  id          String  @id @default(uuid())
-  username String @unique
+model User {
+  id       String    @id @default(uuid())
+  username String    @unique
   password String
   website  Website[]
 }
 
+model Website {
+  id        String         @id @default(uuid())
+  url       String
+  timeAdded DateTime       @default(now())
+  ticks     WebsiteTicks[]
+  userid    String
+  user      User           @relation(fields: [userid], references: [id], onDelete: Cascade)
 
-model Website{
-  id          String  @id @default(uuid())
-  url         String
-  timeAdded   DateTime
-  ticks       WebsiteTicks[]
-  userid      String
-  user        User   @relation(fields: [userid],references: [id])
+  @@unique([userid, url])
+  @@index([userid])
 }
 
-model Region{
-  id          String  @id @default(uuid())
-  name        String
-  ticks       WebsiteTicks[]
+model Region {
+  id    String         @id @default(uuid())
+  name  String
+  ticks WebsiteTicks[]
 }
 
-model WebsiteTicks{
-  id           String  @id @default(uuid())
-  res_time_ms  Int
-  status       WebsiteStatus
-  region_id    String
-  website_id   String
-  region       Region    @relation(fields: [region_id],references: [id])
-  website      Website   @relation(fields: [website_id],references: [id])
+model WebsiteTicks {
+  id          String        @id @default(uuid())
+  res_time_ms Int
+  status      WebsiteStatus
+  statusCode  Int?
+  region_id   String
+  website_id  String
+  createdAt   DateTime      @default(now())
+  region      Region        @relation(fields: [region_id], references: [id], onDelete: Restrict)
+  website     Website       @relation(fields: [website_id], references: [id], onDelete: Cascade)
 
+  @@index([website_id, createdAt(sort: Desc)])
+  @@index([website_id, region_id, createdAt(sort: Desc)])
 }
 
-enum WebsiteStatus{
+enum WebsiteStatus {
   up
   down
 }

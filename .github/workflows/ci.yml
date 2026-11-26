@@ -31,6 +31,12 @@ jobs:
       - name: Typecheck
         run: bunx tsc --noEmit
 
+      - name: Lint
+        run: bun run lint
+
+      - name: Run unit tests
+        run: bun run test
+
       - name: Build Next.js app
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/uptime

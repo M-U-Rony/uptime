@@ -25,6 +25,16 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate:
+    build: .
+    command: ["bunx", "prisma", "migrate", "deploy"]
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/uptime
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   web:
     build: .
     ports:
@@ -34,8 +44,8 @@ services:
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
 
@@ -46,8 +56,8 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/uptime
       REDIS_URL: redis://redis:6379
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
 
@@ -58,8 +68,8 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/uptime
       REDIS_URL: redis://redis:6379
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
 

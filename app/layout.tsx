@@ -13,11 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Better Uptime",
-  description: "",
+  title: "Uptime — Event-Driven Multi-Region Monitor",
+  description:
+    "Multi-region website availability and latency monitoring powered by Next.js 16, Redis Streams, Prisma 7, and PostgreSQL.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="en"
